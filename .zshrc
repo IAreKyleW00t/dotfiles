@@ -68,6 +68,6 @@ if [ -d "$HOME/.rvm/bin" ]; then
 fi
 
 # Add VSCode to PATH for MacOS
-if [ ! -f /proc/version]; then
+if [ ! -f /proc/version ]; then
   PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
 fi
