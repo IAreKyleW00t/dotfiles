@@ -57,7 +57,17 @@ fi
 # Command aliases
 [[ ! -f ~/.zaliases ]] || source ~/.zaliases
 
-# Customize PATH
+# Add $HOME/bin to PATH
 if [ -d "$HOME/bin" ]; then
   PATH="$HOME/bin:$PATH"
+fi
+
+# Add RVM to PATH
+if [ -d "$HOME/.rvm/bin" ]; then
+  PATH="$PATH:$HOME/.rvm/bin"
+fi
+
+# Add VSCode to PATH for MacOS
+if [ ! -f /proc/version]; then
+  PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
 fi
