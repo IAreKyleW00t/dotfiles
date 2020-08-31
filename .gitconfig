@@ -4,7 +4,7 @@
   username = IAreKyleW00t
   signkey = ACADEFE9681D6184A3594DF13453B816CEFDAD6F
 [core]
-  editor = vim
+  editor = code --wait
   whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
   excludesfile = ~/.gitignore
 [color]
@@ -24,9 +24,11 @@
   changed = yellow bold
   untracked = red bold
 [diff]
-  tool = vimdiff
+  tool = default-code
 [difftool]
   prompt = false
+[difftool "default-code"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 [gpg]
   program = gpg2
 [filter "lfs"]
