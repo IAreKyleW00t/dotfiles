@@ -1,0 +1,40 @@
+[user]
+  name = Kyle Colantonio
+  email = k@yle.sh
+  username = IAreKyleW00t
+  signkey = ACADEFE9681D6184A3594DF13453B816CEFDAD6F
+[core]
+  editor = code --wait
+  whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  excludesfile = ~/.gitignore
+[color]
+  ui = true
+[color "branch"]
+  current = yellow bold
+  local = green bold
+  remote = cyan bold
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[color "status"]
+  added = green bold
+  changed = yellow bold
+  untracked = red bold
+[diff]
+  tool = default-code
+[difftool]
+  prompt = false
+[difftool "default-code"]
+  cmd = code --wait --diff $LOCAL $REMOTE
+[gpg]
+  program = gpg2
+[filter "lfs"]
+  required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+[commit]
+  gpgsign = true
