@@ -24,5 +24,13 @@ if [[ -d "$HOME/bin" ]]; then
   PATH="$HOME/bin:$PATH"
 fi
 
-# Initialize completions
+# Initialize ZSH completion
 autoload -Uz compinit && compinit
+
+# Enable ZSH history
+export HISTFILE=~/.zsh_history
+export SAVEHIST=1000
+setopt appendhistory
+
+# Fix GPG agent for WSL2
+export GPG_TTY=$(tty)
