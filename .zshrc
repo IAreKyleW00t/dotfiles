@@ -1,3 +1,25 @@
+# Ensure SSH agent is running
+ssh-add -l &>/dev/null
+if [[ "$?" == 2 ]]; then
+  echo -n "Starting SSH agent..."
+  # Load stored agent connection info and test it
+  test -r ~/.ssh-agent && eval "$(<~/.ssh-agent)" >/dev/null
+  ssh-add -l &>/dev/null
+
+  # Start new agent and store agent connection info if failed
+  if [[ "$?" == 2 ]]; then
+    (umask 066; ssh-agent > ~/.ssh-agent)
+    eval "$(<~/.ssh-agent)" >/dev/null
+  fi
+  echo " Done!"
+fi
+
+# Load SSH identities
+echo "Adding SSH identities..."
+for key in $(ls ~/.ssh/id_* | grep -v .pub); do
+  ssh-add -t "4h" "$key"
+done
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -32,5 +54,6 @@ export HISTFILE=~/.zsh_history
 export SAVEHIST=1000
 setopt appendhistory
 
-# Fix GPG agent for WSL2
-export GPG_TTY=$(tty)
+# Jumping between CLI words with Ctrl+Forward/Backward arrows
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
