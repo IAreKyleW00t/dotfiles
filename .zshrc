@@ -1,24 +1,19 @@
 # Ensure SSH agent is running
-ssh-add -l &>/dev/null
-if [[ "$?" == 2 ]]; then
-  echo -n "Starting SSH agent..."
-  # Load stored agent connection info and test it
-  test -r ~/.ssh-agent && eval "$(<~/.ssh-agent)" >/dev/null
-  ssh-add -l &>/dev/null
-
-  # Start new agent and store agent connection info if failed
-  if [[ "$?" == 2 ]]; then
-    (umask 066; ssh-agent > ~/.ssh-agent)
-    eval "$(<~/.ssh-agent)" >/dev/null
+if ! ssh-add -l &>/dev/null; then
+  if [ ! -f ~/.ssh-agent ]; then
+    echo "Starting SSH agent..."
+    ssh-agent > ~/.ssh-agent
   fi
-  echo " Done!"
+  eval $(<~/.ssh-agent) &>/dev/null
 fi
 
 # Load SSH identities
-echo "Adding SSH identities..."
-for key in $(ls ~/.ssh/id_* | grep -v .pub); do
-  ssh-add -t "4h" "$key"
-done
+if ! ssh-add -l &>/dev/null; then
+  echo "Adding SSH identities..."
+  for key in $(ls ~/.ssh/id_* | grep -v .pub); do
+    ssh-add -t "4h" "$key"
+  done
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -29,14 +24,14 @@ fi
 
 # Load and customize the powerlevel10k theme
 source /opt/powerlevel10k/powerlevel10k.zsh-theme
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+test -f ~/.p10k.zsh && source ~/.p10k.zsh
 
 # Enable asdf integration
 source ~/.asdf/asdf.sh
 fpath=(${ASDF_DIR}/completions $fpath)
 
 # Command aliases
-[[ ! -f ~/.zsh_aliases ]] || source ~/.zsh_aliases
+test -f ~/.zsh_aliases && source ~/.zsh_aliases
 
 # Add VS Code CLI to path
 export PATH="$PATH:/mnt/c/Users/k/AppData/Local/Programs/Microsoft VS Code/bin"
@@ -51,8 +46,11 @@ autoload -Uz compinit && compinit
 
 # Enable ZSH history
 export HISTFILE=~/.zsh_history
-export SAVEHIST=1000
-setopt appendhistory
+export HISTSIZE=100000
+export SAVEHIST=100000
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
 
 # Jumping between CLI words with Ctrl+Forward/Backward arrows
 bindkey "^[[1;5C" forward-word
