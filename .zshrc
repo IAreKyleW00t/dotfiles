@@ -1,10 +1,11 @@
 # Ensure SSH agent is running
 if ! ssh-add -l &>/dev/null; then
-  if [ ! -f ~/.ssh-agent ]; then
+  test -f ~/.ssh-agent && eval $(<~/.ssh-agent) &>/dev/null
+  if ! ps -p "$SSH_AGENT_PID" &>/dev/null; then
     echo "Starting SSH agent..."
     ssh-agent > ~/.ssh-agent
+    eval $(<~/.ssh-agent) &>/dev/null
   fi
-  eval $(<~/.ssh-agent) &>/dev/null
 fi
 
 # Load SSH identities
