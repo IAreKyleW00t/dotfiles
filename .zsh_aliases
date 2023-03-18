@@ -6,3 +6,6 @@ alias tf='terraform'
 
 # kubectl
 alias k='kubectl'
+
+# trivy
+alias trivy='docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache/trivy:/root/.cache/ aquasec/trivy:latest'
