@@ -12,7 +12,7 @@ fi
 if ! ssh-add -l &>/dev/null; then
   echo "Adding SSH identities..."
   for key in $(ls ~/.ssh/id_* | grep -v .pub); do
-    ssh-add -t "4h" "$key"
+    ssh-add -t "6h" "$key"
   done
 fi
 
@@ -34,8 +34,11 @@ fpath=(${ASDF_DIR}/completions $fpath)
 # Command aliases
 test -f ~/.zsh_aliases && source ~/.zsh_aliases
 
+# Add Linuxbrew to path
+export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
+
 # Add VS Code CLI to path
-export PATH="$PATH:/mnt/c/Users/k/AppData/Local/Programs/Microsoft VS Code/bin"
+PATH="$PATH:/mnt/c/Users/k/AppData/Local/Programs/Microsoft VS Code/bin"
 
 # Add $HOME/bin to PATH
 if [[ -d "$HOME/bin" ]]; then
