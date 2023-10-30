@@ -1,19 +1,14 @@
-# Ensure SSH agent is running
-if ! ssh-add -l &>/dev/null; then
-  test -f ~/.ssh-agent && eval $(<~/.ssh-agent) &>/dev/null
-  if ! ps -p "$SSH_AGENT_PID" &>/dev/null; then
-    echo "Starting SSH agent..."
-    ssh-agent > ~/.ssh-agent
-    eval $(<~/.ssh-agent) &>/dev/null
-  fi
-fi
-
-# Load SSH identities
-if ! ssh-add -l &>/dev/null; then
-  echo "Adding SSH identities..."
-  for key in $(ls ~/.ssh/id_* | grep -v .pub); do
-    ssh-add -t "6h" "$key"
-  done
+# Configure 1Password SSH forwarding
+# https://gist.github.com/WillianTomaz/a972f544cc201d3fbc8cd1f6aeccef51
+export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
+ALREADY_RUNNING=$(ps -auxww | grep -q "[n]piperelay.exe -ei -s //./pipe/openssh-ssh-agent"; echo $?)
+if [[ $ALREADY_RUNNING != "0" ]]; then
+    if [[ -S $SSH_AUTH_SOCK ]]; then
+        echo "Removing previous SSH socket..."
+        rm $SSH_AUTH_SOCK
+    fi
+    echo "Starting SSH-Agent relay..."
+    (setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork &) >/dev/null 2>&1
 fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
