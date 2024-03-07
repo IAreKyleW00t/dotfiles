@@ -1,16 +1,3 @@
-# Configure 1Password SSH forwarding
-# https://gist.github.com/WillianTomaz/a972f544cc201d3fbc8cd1f6aeccef51
-export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
-ALREADY_RUNNING=$(ps -auxww | grep -q "[n]piperelay.exe -ei -s //./pipe/openssh-ssh-agent"; echo $?)
-if [[ $ALREADY_RUNNING != "0" ]]; then
-    if [[ -S $SSH_AUTH_SOCK ]]; then
-        echo "Removing previous SSH socket..."
-        rm $SSH_AUTH_SOCK
-    fi
-    echo "Starting SSH-Agent relay..."
-    (setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork &) >/dev/null 2>&1
-fi
-
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -30,10 +17,11 @@ fpath=(${ASDF_DIR}/completions $fpath)
 test -f ~/.zsh_aliases && source ~/.zsh_aliases
 
 # Add Linuxbrew to path
-export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
+export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+export PATH="/home/linuxbrew/.linuxbrew/sbin:$PATH"
 
 # Add VS Code CLI to path
-PATH="$PATH:/mnt/c/Users/k/AppData/Local/Programs/Microsoft VS Code/bin"
+PATH="/mnt/c/Users/k/AppData/Local/Programs/Microsoft VS Code/bin:$PATH"
 
 # Add $HOME/bin to PATH
 if [[ -d "$HOME/bin" ]]; then

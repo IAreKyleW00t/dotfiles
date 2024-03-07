@@ -7,6 +7,7 @@
   editor = code --wait
   whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
   excludesfile = ~/.gitignore
+  sshCommand = ssh.exe
 [protocol]
   version = 2
 [color]
@@ -38,5 +39,7 @@
   process = git-lfs filter-process
 [gpg]
   format = ssh
+[gpg "ssh"]
+  program = /mnt/c/Users/k/AppData/Local/1Password/app/8/op-ssh-sign-wsl
 [commit]
   gpgsign = true
