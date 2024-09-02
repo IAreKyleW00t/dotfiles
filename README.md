@@ -1,4 +1,4 @@
-# dotfiles
+# 🗂️ dotfiles
 
 This is a very basic repo for managing and tracking my `dotfiles` using plain 'ol [git](https://git-scm.com/).
 Feel free to use this repo as a reference/example for creating your own dotfiles.

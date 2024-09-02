@@ -4,10 +4,6 @@ alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # 1Password
 alias op='/mnt/c/bin/op.exe'
 
-# SSH
-alias ssh='ssh.exe'
-alias ssh-add='ssh-add.exe'
-
 # terraform
 alias tf='terraform'
 

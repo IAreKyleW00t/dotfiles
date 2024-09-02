@@ -39,6 +39,8 @@ setopt INC_APPEND_HISTORY        # Write to the history file immediately, not wh
 setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
 setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
 
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # Jumping between CLI words with Ctrl+Forward/Backward arrows
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
