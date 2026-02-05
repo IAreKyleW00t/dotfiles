@@ -10,8 +10,8 @@ source /opt/powerlevel10k/powerlevel10k.zsh-theme
 test -f ~/.p10k.zsh && source ~/.p10k.zsh
 
 # Enable asdf integration
-source ~/.asdf/asdf.sh
-fpath=(${ASDF_DIR}/completions $fpath)
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
 
 # Command aliases
 test -f ~/.zsh_aliases && source ~/.zsh_aliases
@@ -44,3 +44,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 # Jumping between CLI words with Ctrl+Forward/Backward arrows
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
+
+# Golang
+export ASDF_GOLANG_MOD_VERSION_ENABLED=true
+source ~/.asdf/plugins/golang/set-env.zsh
