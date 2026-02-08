@@ -1,4 +1,4 @@
-# Utility function to update yay
+# Utility function to install/update yay
 function yay-update
     set -q YAY_REPO || set YAY_REPO "yay-bin" # or yay
     set -q YAY_SRC_DIR || set YAY_SRC_DIR "$HOME/.local/src/$YAY_REPO"
