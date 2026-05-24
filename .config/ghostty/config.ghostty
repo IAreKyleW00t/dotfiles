@@ -1,7 +1,12 @@
 theme = 12-bit Rainbow
 
-# Avoid bell/attention/title/border visual noise.
-bell-features = no-system,no-audio,no-attention,no-title,no-border
+# Notify only when a command finishes after running for a while.
+notify-on-command-finish = unfocused
+notify-on-command-finish-after = 2m
+notify-on-command-finish-action = no-bell,notify
+
+# Let programs that intentionally ring the terminal bell still request attention.
+bell-features = system,attention,title
 
 # Avoid compositor-heavy redraw flicker on KDE Wayland.
 background-opacity = 1
@@ -15,3 +20,6 @@ cursor-style-blink = false
 
 # Do not ask for confirmation when closing a window/tab/split.
 confirm-close-surface = false
+
+window-width = 140
+window-height = 38
