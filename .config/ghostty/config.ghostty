@@ -1,0 +1,17 @@
+theme = 12-bit Rainbow
+
+# Avoid bell/attention/title/border visual noise.
+bell-features = no-system,no-audio,no-attention,no-title,no-border
+
+# Avoid compositor-heavy redraw flicker on KDE Wayland.
+background-opacity = 1
+background-blur = false
+
+# Avoid dimming/fading effects if you use Ghostty splits.
+unfocused-split-opacity = 1
+
+# Optional: reduce tiny visual flicker/distraction from blinking cursor.
+cursor-style-blink = false
+
+# Do not ask for confirmation when closing a window/tab/split.
+confirm-close-surface = false
