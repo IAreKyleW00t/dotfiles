@@ -21,5 +21,10 @@ cursor-style-blink = false
 # Do not ask for confirmation when closing a window/tab/split.
 confirm-close-surface = false
 
+# Do not automatically copy merely because text was selected.
+copy-on-select = false
+keybind = performable:ctrl+shift+c=copy_to_clipboard
+keybind = ctrl+shift+v=paste_from_clipboard
+
 window-width = 140
 window-height = 38
