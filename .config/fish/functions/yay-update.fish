@@ -1,5 +1,4 @@
-# Utility function to install/update yay
-function yay-update
+function yay-update --description "Install or update yay AUR helper"
     set -q YAY_REPO || set YAY_REPO "yay-bin" # or yay
     set -q YAY_SRC_DIR || set YAY_SRC_DIR "$HOME/.local/src/$YAY_REPO"
     mkdir -p "$YAY_SRC_DIR"
