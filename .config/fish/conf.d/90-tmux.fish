@@ -34,29 +34,8 @@ if not command -q tmux
     return
 end
 
-# VS Code integrated terminal gets a workspace/repo-specific session.
+# Do not start tmux inside VS Code integrated terminals.
 if test "$TERM_PROGRAM" = "vscode"
-    set -l root "$PWD"
-
-    # Prefer the git repo root so nested folders share one VS Code tmux session.
-    if command -q git
-        set -l git_root (command git rev-parse --show-toplevel 2>/dev/null)
-
-        if test -n "$git_root"
-            set root "$git_root"
-        end
-    end
-
-    # Make a safe session name from the folder name.
-    set -l folder (basename "$root")
-    set -l safe_folder (string replace -ra '[^A-Za-z0-9_.-]' '-' "$folder")
-
-    # Add a short hash so two repos/folders with the same basename do not collide.
-    set -l hash (printf "%s" "$root" | sha1sum | string split -f1 ' ' | string sub -l 8)
-
-    set -l session "vscode-$safe_folder-$hash"
-
-    exec tmux new-session -A -s "$session" -c "$root"
     return
 end
 
