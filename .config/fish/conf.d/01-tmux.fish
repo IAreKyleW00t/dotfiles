@@ -5,6 +5,10 @@ if not status is-interactive
     return
 end
 
+# Avoid weird behavior in non-TTY contexts.
+isatty stdin; or return
+isatty stdout; or return
+
 # Allow one-off bypass:
 #   env NO_TMUX=1 fish
 if set -q NO_TMUX
