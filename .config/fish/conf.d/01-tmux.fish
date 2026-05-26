@@ -21,18 +21,13 @@ if set -q SSH_TTY
     return
 end
 
-# Do not interfere with VS Code's hidden shell used to resolve environment.
-if test "$VSCODE_RESOLVING_ENVIRONMENT" = "1"
+# Do not start tmux inside integrated IDEs
+if set -q VSCODE_INJECTION; or set -q ZED_TERM
     return
 end
 
 # Do nothing if tmux is unavailable.
 if not command -q tmux
-    return
-end
-
-# Do not start tmux inside integrated IDEs
-if test "$TERM_PROGRAM" = "vscode"; or test "$ZED_TERM" = "true"
     return
 end
 

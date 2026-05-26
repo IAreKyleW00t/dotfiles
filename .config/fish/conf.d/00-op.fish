@@ -13,7 +13,7 @@ type -q op; or return
 isatty stdin; or return
 isatty stdout; or return
 
-# Optional: skip editor-integrated terminals.
+# Do not start op inside integrated IDEs
 if set -q VSCODE_INJECTION; or set -q ZED_TERM
     return
 end
