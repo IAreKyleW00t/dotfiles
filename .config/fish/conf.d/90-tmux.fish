@@ -34,8 +34,8 @@ if not command -q tmux
     return
 end
 
-# Do not start tmux inside VS Code integrated terminals.
-if test "$TERM_PROGRAM" = "vscode"
+# Do not start tmux inside integrated IDEs
+if test "$TERM_PROGRAM" = "vscode"; or test "$ZED_TERM" = "true"
     return
 end
 
