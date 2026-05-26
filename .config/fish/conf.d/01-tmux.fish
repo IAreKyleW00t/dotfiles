@@ -1,7 +1,4 @@
 # Auto-enter tmux for local interactive terminals.
-#
-# Normal terminals attach/create: main
-# VS Code integrated terminals attach/create: vscode-<folder>-<hash>
 
 # Only run for interactive shells.
 if not status is-interactive

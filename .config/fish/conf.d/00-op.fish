@@ -2,6 +2,7 @@
 status is-interactive; or return
 
 # Escape hatches / recursion guards.
+set -q TMUX; and return
 set -q NO_OP; and return
 set -q OP_INJECTED; and return
 
