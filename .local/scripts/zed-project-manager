@@ -3,8 +3,12 @@ set -uo pipefail
 
 PROJECTS_DIR="$HOME/GitHub"
 PROJECT=$(
-  find "$PROJECTS_DIR" -mindepth 1 -maxdepth 1 -type d |
-    sort |
+    find "$PROJECTS_DIR" -type d \
+        -maxdepth 3 \
+        -exec test -e "{}/.git" \; \
+        -print \
+        -prune |
+    sort -u |
     fzf --prompt="Project> "
 )
 RC=$?
