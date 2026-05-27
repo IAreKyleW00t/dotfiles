@@ -1,0 +1,14 @@
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-shift-p": [
+        "task::Spawn",
+        { "task_name": "switch project", "reveal_target": "center" },
+      ],
+
+      "ctrl-p": "file_finder::Toggle",
+      "ctrl-alt-p": "command_palette::Toggle",
+    },
+  },
+]

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+PROJECTS_DIR="$HOME/GitHub"
+PROJECT=$(
+  find "$PROJECTS_DIR" -mindepth 1 -maxdepth 1 -type d |
+    sort |
+    fzf --prompt="Project> "
+)
+RC=$?
+
+if [ "$RC" -eq 0 ] && [ -n "$PROJECT" ]; then
+  zeditor -e "$PROJECT"
+fi
+exit 0
