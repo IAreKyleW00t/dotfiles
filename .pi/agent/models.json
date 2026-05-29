@@ -1,0 +1,57 @@
+{
+  "providers": {
+    "llama-swap": {
+      "baseUrl": "http://127.0.0.1:9292/v1",
+      "api": "openai-completions",
+      "apiKey": "none",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false
+      },
+      "models": [
+        {
+          "id": "mini",
+          "name": "local-mini",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "normal",
+          "name": "local-normal",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "large",
+          "name": "local-large",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 32768,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        }
+      ]
+    }
+  }
+}

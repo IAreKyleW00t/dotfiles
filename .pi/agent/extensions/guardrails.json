@@ -1,0 +1,536 @@
+{
+  "$schema": "https://unpkg.com/@aliou/pi-guardrails@0.13.1/schema.json",
+  "enabled": true,
+  "applyBuiltinDefaults": true,
+  "features": {
+    "policies": true,
+    "pathAccess": true,
+    "permissionGate": true
+  },
+  "pathAccess": {
+    "mode": "ask",
+    "allowedPaths": [
+      "/dev/null",
+      "/dev/stdout",
+      "/dev/stderr",
+      "~/.pi/agent/AGENT.md",
+      "~/.pi/agent/settings.json",
+      "~/.pi/agent/guardrails.json",
+      "~/.pi/agent/agents/",
+      "~/.pi/agent/skills/",
+      "~/.pi/agent/prompts/",
+      "~/.pi/agent/themes/",
+      "~/.pi/agent/extensions/",
+      "~/.pi/agent/npm/",
+      "~/.pi/agent/git/",
+      "~/.asdf/installs/nodejs/"
+    ]
+  },
+  "policies": {
+    "rules": [
+      {
+        "id": "pi-installed-code-readonly",
+        "description": "Allow inspection of installed Pi package/runtime code, but prevent accidental edits. Pi user configuration is readable without prompts; edits require explicit user approval by AGENTS.md policy.",
+        "protection": "readOnly",
+        "patterns": [
+          {
+            "pattern": "(^|/)\\.pi/agent/(extensions|npm|git)(/|$)",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.asdf/installs/nodejs/\\d+\\.\\d+\\.\\d+/lib/node_modules(/|$)",
+            "regex": true
+          }
+        ],
+        "onlyIfExists": true,
+        "blockMessage": "Installed Pi package/runtime code is read-only by default: {file}"
+      },
+      {
+        "id": "secret-files",
+        "description": "Files containing secrets. Regex mode: match .env and .env.* at any path depth; allow examples/samples/templates.",
+        "protection": "noAccess",
+        "patterns": [
+          {
+            "pattern": "(^|/)\\.env(\\..+)?$",
+            "regex": true
+          }
+        ],
+        "allowedPatterns": [
+          {
+            "pattern": "(^|/)\\.env\\.example$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.env\\.(sample|template|dist)$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.env\\.example\\..+$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)[^/]*\\.sample\\.env$",
+            "regex": true
+          }
+        ],
+        "onlyIfExists": true,
+        "blockMessage": "Blocked access to environment/secrets file: {file}"
+      },
+      {
+        "id": "direnv-files",
+        "description": "Direnv files may contain exported secrets or local shell setup.",
+        "protection": "readOnly",
+        "patterns": [
+          {
+            "pattern": "(^|/)\\.envrc$",
+            "regex": true
+          }
+        ],
+        "onlyIfExists": true,
+        "blockMessage": "Direnv file is read-only by default: {file}"
+      },
+      {
+        "id": "private-key-files",
+        "description": "Private keys, local cert/key bundles, and common SSH private key names.",
+        "protection": "noAccess",
+        "patterns": [
+          {
+            "pattern": "(^|/)[^/]+\\.(pem|key|p12|pfx)$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)id_(rsa|dsa|ecdsa|ed25519)$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)[^/]*_(rsa|dsa|ecdsa|ed25519)$",
+            "regex": true
+          }
+        ],
+        "allowedPatterns": [
+          {
+            "pattern": "(^|/)[^/]+\\.(pub|csr)$",
+            "regex": true
+          }
+        ],
+        "onlyIfExists": true,
+        "blockMessage": "Blocked access to private key/certificate material: {file}"
+      },
+      {
+        "id": "cloud-and-cli-credentials",
+        "description": "Common local credential files for cloud, package managers, Docker, git, and netrc.",
+        "protection": "noAccess",
+        "patterns": [
+          {
+            "pattern": "(^|/)\\.aws/(credentials|config)$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.docker/config\\.json$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.npmrc$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.pypirc$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.netrc$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.git-credentials$",
+            "regex": true
+          }
+        ],
+        "onlyIfExists": true,
+        "blockMessage": "Blocked access to local credential file: {file}"
+      },
+      {
+        "id": "infra-secret-state",
+        "description": "Infrastructure state and variable files commonly containing secrets.",
+        "protection": "noAccess",
+        "patterns": [
+          {
+            "pattern": "(^|/)terraform\\.tfstate(\\..*)?$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)[^/]+\\.(auto\\.)?tfvars(\\.json)?$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)[^/]*kubeconfig[^/]*$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)\\.kube/config$",
+            "regex": true
+          },
+          {
+            "pattern": "(^|/)[^/]*secret[^/]*\\.(ya?ml|json)$",
+            "regex": true
+          }
+        ],
+        "onlyIfExists": true,
+        "blockMessage": "Blocked access to infrastructure secret/state file: {file}"
+      },
+      {
+        "id": "runtime-output-readonly",
+        "description": "Logs and local database files are useful for inspection but should not be mutated by agents.",
+        "protection": "readOnly",
+        "patterns": [
+          {
+            "pattern": "(^|/)[^/]+\\.(log|out|db|sqlite|sqlite3)$",
+            "regex": true
+          }
+        ],
+        "onlyIfExists": true,
+        "blockMessage": "Runtime output/database file is read-only by default: {file}"
+      }
+    ]
+  },
+  "permissionGate": {
+    "requireConfirmation": true,
+    "autoDenyPatterns": [
+      {
+        "pattern": "(^|[;&|]\\s*)mkfs(\\.[A-Za-z0-9_-]+)?\\b",
+        "description": "Blocked disk formatting command.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)dd\\b(?=.*\\bof=)",
+        "description": "Blocked raw disk write/copy command using dd output file.",
+        "regex": true
+      },
+      {
+        "pattern": ":\\(\\)\\s*\\{",
+        "description": "Blocked fork-bomb pattern.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)rm\\s+-[^\\s]*r[^\\s]*f?[^\\s]*\\s+/(\\s|$)",
+        "description": "Blocked recursive delete against filesystem root.",
+        "regex": true
+      }
+    ],
+    "patterns": [
+      {
+        "pattern": "(^|[;&|]\\s*)rm\\s+-(?:[^\\s]*r[^\\s]*f|[^\\s]*f[^\\s]*r)\\b",
+        "description": "Recursive force delete requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)sudo\\b",
+        "description": "Privileged command requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(chmod|chown)\\s+-R\\b",
+        "description": "Recursive permission/ownership change requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(curl|wget)\\b",
+        "description": "Network download requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)sudo\\s+(apt|apt-get|dnf|yum|pacman|apk|zypper|snap|flatpak)\\b",
+        "description": "System package manager under sudo requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(apt|apt-get)\\s+(install|remove|purge|upgrade|dist-upgrade|full-upgrade)\\b",
+        "description": "APT package changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)brew\\s+(install|upgrade|uninstall)\\b",
+        "description": "Homebrew package changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(dnf|yum)\\s+(install|remove|upgrade|update)\\b",
+        "description": "RPM package manager changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)pacman\\s+-(S|R|U|Syu)\\b",
+        "description": "Pacman package changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)apk\\s+(add|del|upgrade)\\b",
+        "description": "Alpine package changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)zypper\\s+(install|remove|update|upgrade)\\b",
+        "description": "Zypper package changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(snap|flatpak)\\s+(install|remove|update|upgrade|uninstall)\\b",
+        "description": "Snap/Flatpak package changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)npm\\s+(install|i)\\b(?=.*(^|\\s)(-g|--global)(\\s|$))",
+        "description": "Global npm install requires approval. Prefer devDependencies, npx, pnpm dlx, or project-local scripts.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)pnpm\\s+(add|install)\\b(?=.*(^|\\s)-g(\\s|$))",
+        "description": "Global pnpm install requires approval. Prefer project-local devDependencies or pnpm dlx.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)yarn\\s+global\\s+add\\b",
+        "description": "Global yarn install requires approval. Prefer project-local devDependencies.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)bun\\s+add\\b(?=.*(^|\\s)-g(\\s|$))",
+        "description": "Global bun install requires approval. Prefer project-local dependencies or bunx.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)corepack\\s+enable\\b",
+        "description": "Global package-manager shim changes require approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)sudo\\s+(python[0-9.]?\\s+-m\\s+)?pip\\b",
+        "description": "System/global pip usage requires approval. Prefer uv, venv, or project-local dependency files.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(python[0-9.]?\\s+-m\\s+)?pip\\s+install\\b(?=.*(^|\\s)(--user|--break-system-packages)(\\s|$))",
+        "description": "User-global/system Python modification requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)pipx\\s+install\\b",
+        "description": "Global/user tool install requires approval. Prefer project-local tooling unless intentional.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)gem\\s+install\\b",
+        "description": "Global Ruby gem install requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)cargo\\s+install\\b",
+        "description": "Global Rust binary install requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)go\\s+install\\b",
+        "description": "Go binary install into GOPATH/GOBIN requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)rustup\\s+(install|update)\\b",
+        "description": "Rust toolchain install/update requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)asdf\\s+plugin\\s+add\\b",
+        "description": "Global tool version manager change requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)mise\\s+install\\b",
+        "description": "Tool version installation requires approval unless clearly project-local.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)git\\s+push\\s+--force(-with-lease)?\\b",
+        "description": "Force push requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)git\\s+push\\b(?=.*(^|\\s)-f(\\s|$))",
+        "description": "Force push requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(npm|yarn|pnpm)\\s+publish\\b",
+        "description": "Package publishing requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)kubectl\\s+(delete|apply|scale|create|replace|patch|annotate|label|cordon|drain|uncordon)\\b",
+        "description": "Kubernetes mutating command requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)kubectl\\s+rollout\\s+restart\\b",
+        "description": "Kubernetes rollout restart requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)kubectl\\s+config\\s+(set|set-context|use-context|delete-context|rename-context)\\b",
+        "description": "Kubernetes config mutation requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)helm\\s+(install|upgrade|uninstall|rollback)\\b",
+        "description": "Helm mutating command requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)terraform\\s+(apply|destroy|import)\\b",
+        "description": "Terraform mutating command requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)terraform\\s+(state\\s+(rm|mv|push)|taint|untaint|force-unlock|workspace\\s+(new|delete|select))\\b",
+        "description": "Terraform state/workspace mutation requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)aws\\s+s3\\s+rm\\b",
+        "description": "AWS S3 delete requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)aws\\s+iam\\b",
+        "description": "AWS IAM changes require confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)aws\\s+ec2\\s+terminate-instances\\b",
+        "description": "AWS EC2 termination requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)aws\\s+cloudformation\\s+(deploy|delete-stack|update-stack|create-stack)\\b",
+        "description": "AWS CloudFormation mutation requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(docker|podman)\\s+(system\\s+prune|volume\\s+(rm|prune)|image\\s+prune|container\\s+prune)\\b",
+        "description": "Container cleanup/destructive command requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)docker\\s+compose\\s+down\\b(?=.*(^|\\s)-v(\\s|$))",
+        "description": "Docker Compose volume deletion requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "\\b[Dd][Rr][Oo][Pp]\\s+[Dd][Aa][Tt][Aa][Bb][Aa][Ss][Ee]\\b",
+        "description": "Database drop requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "\\b[Dd][Rr][Oo][Pp]\\s+[Tt][Aa][Bb][Ll][Ee]\\b",
+        "description": "Table drop requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "\\b[Tt][Rr][Uu][Nn][Cc][Aa][Tt][Ee]\\s+[Tt][Aa][Bb][Ll][Ee]\\b",
+        "description": "Table truncate requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)npx\\s+(-y\\s+)?prisma\\s+migrate\\s+reset\\b",
+        "description": "Prisma destructive migration reset requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)prisma\\s+migrate\\s+reset\\b",
+        "description": "Prisma destructive migration reset requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)firecrawl\\s+(crawl|map|interact|agent|init|setup)\\b",
+        "description": "Firecrawl broad extraction/automation/setup requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)ctx7\\s+(setup|skill)\\b",
+        "description": "Context7 setup/skill management may modify agent/editor configuration; requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)npx\\s+(-y\\s+)?(ctx7|firecrawl)\\b",
+        "description": "Running Context7/Firecrawl through npx may install or execute external package code; requires approval.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)git\\s+reset\\s+--hard\\b",
+        "description": "Destructive git reset requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)git\\s+clean\\s+-[^\\s]*[fdx][^\\s]*\\b",
+        "description": "Destructive git clean requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)git\\s+(checkout|restore)\\b(?=.*\\s(--|\\.)(\\s|$))",
+        "description": "Git checkout/restore that may discard local changes requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(curl|wget)[^\\n]*(\\||>)\\s*(sh|bash|zsh|fish)\\b",
+        "description": "Remote download piped into a shell requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(bash|sh|zsh|fish)\\s+<\\s*\\(\\s*(curl|wget)\\b",
+        "description": "Process substitution from remote download into shell requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)sudo\\s+tee\\s+/(etc|usr|bin|sbin|lib|System|Library)\\b",
+        "description": "Writing to system paths through sudo tee requires confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(systemctl|service|launchctl)\\s+(enable|disable|start|stop|restart|reload|unload|load)\\b",
+        "description": "System service changes require confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(useradd|userdel|usermod|groupadd|groupdel|groupmod|passwd|visudo)\\b",
+        "description": "User/group/password/sudoers changes require confirmation.",
+        "regex": true
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)crontab\\s+(-e|-r|[^\\n]*>)",
+        "description": "Cron changes require confirmation.",
+        "regex": true
+      }
+    ],
+    "allowedPatterns": [
+      {
+        "pattern": "^\\s*git\\s+status(?:\\s+--short)?\\s*$",
+        "description": "Safe git status.",
+        "regex": true
+      },
+      {
+        "pattern": "^\\s*git\\s+diff(?:\\s+--stat)?\\s*$",
+        "description": "Safe git diff.",
+        "regex": true
+      },
+      {
+        "pattern": "^\\s*git\\s+log(?:\\s+--oneline)?\\s*$",
+        "description": "Safe git log.",
+        "regex": true
+      }
+    ]
+  },
+  "version": "0.13.1-20260529-custom",
+  "onboarding": {
+    "completed": true,
+    "completedAt": "2026-05-23T17:18:00.541Z",
+    "version": "0.13.1-20260523"
+  }
+}

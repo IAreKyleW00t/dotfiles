@@ -1,0 +1,40 @@
+{
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
+  "defaultThinkingLevel": "xhigh",
+  "packages": [
+    "npm:@aliou/pi-guardrails",
+    "npm:context-mode",
+
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:@juicesharp/rpiv-btw",
+
+    "npm:pi-web-access",
+    "npm:pi-intercom",
+    "npm:@gotgenes/pi-subagents",
+
+    "npm:pi-lens",
+
+    "npm:pi-caveman",
+    "npm:@victor-software-house/pi-curated-themes",
+    "npm:pi-powerline-footer"
+  ],
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 16384,
+    "keepRecentTokens": 20000
+  },
+  "retry": {
+    "enabled": true,
+    "maxRetries": 3,
+    "provider": {
+      "maxRetryDelayMs": 60000
+    }
+  },
+  "steeringMode": "one-at-a-time",
+  "followUpMode": "one-at-a-time",
+  "lastChangelogVersion": "0.77.0",
+  "hideThinkingBlock": true,
+  "theme": "aura"
+}
