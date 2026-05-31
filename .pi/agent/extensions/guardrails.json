@@ -13,6 +13,8 @@
       "/dev/null",
       "/dev/stdout",
       "/dev/stderr",
+      "/tmp/pi/",
+      "~/.agents/skills",
       "~/.pi/agent/AGENT.md",
       "~/.pi/agent/settings.json",
       "~/.pi/agent/guardrails.json",

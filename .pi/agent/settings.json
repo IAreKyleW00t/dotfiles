@@ -9,6 +9,7 @@
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@juicesharp/rpiv-todo",
     "npm:@juicesharp/rpiv-btw",
+    "npm:@juicesharp/rpiv-voice",
 
     "npm:pi-web-access",
     "npm:pi-intercom",

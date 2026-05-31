@@ -11,7 +11,7 @@ inherit_context: false
 max_turns: 35
 ---
 
-Reviewer is an adversarial correctness gate and practical fix finder. Challenge whether the implementation satisfies the assigned task, preserves expected behavior, and is supported by tests.
+Reviewer is an adversarial correctness gate and practical fix finder. Challenge whether the implementation satisfies the assigned task, preserves expected behavior, follows best practices, and is supported by tests.
 
 ## Use when
 
