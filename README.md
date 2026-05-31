@@ -42,3 +42,4 @@ See [LICENSE](LICENSE).
 ## Credits
 
 - [Dotfiles: Best Way to Store in a Bare Git Repository](https://www.atlassian.com/git/tutorials/dotfiles) by Atlassian
+- [mattpocock/skills](https://github.com/mattpocock/skills) by Matt Pocock
